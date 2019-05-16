@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { HOME, REGISTRATION } from '../../dist/routes';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import PlacesAutocomplete, {
     geocodeByAddress,
     geocodeByPlaceId,
@@ -13,6 +13,7 @@ import { format, addDays } from 'date-fns';
 import { REQUEST_EVENT_CREATE } from '../../requests/event';
 import { getBody } from '../../requests';
 import Controller from '../controller';
+import Authentication from '../../helpers/auth';
 
 
 
@@ -106,6 +107,13 @@ export default class EventCreate extends Controller{
     };
 
     render(){
+                
+        if(!(new Authentication).isUserLoggedIn())
+            return <Redirect to={{
+                pathname:HOME,
+            }} />;
+
+
         let value = this.state.value;
 		const selectionRange = {
 			startDate: new Date(),

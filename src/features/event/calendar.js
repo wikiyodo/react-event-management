@@ -6,7 +6,9 @@ import { REQUEST_EVENT_GET } from '../../requests/event';
 import { getBody } from '../../requests';
 import { Modal } from 'react-bootstrap';
 import GoogleMapReact from 'google-map-react';
-
+import Authentication from '../../helpers/auth';
+import { HOME } from '../../dist/routes';
+import  { Redirect } from 'react-router-dom';
 
 const localizer = BigCalendar.momentLocalizer(moment) // or globalizeLocalizer
 
@@ -26,7 +28,8 @@ export default class EventCalendar extends Component{
     };
 
     componentDidMount(){
-        this.getAllEvents();
+        if((new Authentication).isUserLoggedIn())
+            this.getAllEvents();
     }
     
     reformatEvent = (event)=>{
@@ -54,7 +57,7 @@ export default class EventCalendar extends Component{
         REQUEST_EVENT_GET({}, (err, res) => {
 
             if(err){
-                alert("Could not load events due to internet connection problem. Retrying...");
+                alert("Could not load events due to authentication problem. Retrying...");
                 setTimeout(()=>this.getAllEvents, 3000);
                 return;
             }
@@ -140,6 +143,12 @@ export default class EventCalendar extends Component{
     };
 
     render(){
+        
+        if(!(new Authentication).isUserLoggedIn())
+            return <Redirect to={{
+                pathname:HOME,
+            }} />;
+
         return(
             <section className="home_banner_area">
             {this.renderEventDetails()}
