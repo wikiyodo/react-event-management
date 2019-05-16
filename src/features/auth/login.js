@@ -28,7 +28,8 @@ export default class LoginPage extends Controller{
 
         REQUEST_LOGIN({ email, password }, (err, res) => {
             if(err){
-                this.setError("Could not connect to the internet");
+
+                this.setError("Could not connect to the internet "+err.message);
                 return;
             }
 
